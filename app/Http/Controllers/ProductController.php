@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Http\Controllers\Controller;
 use App\Models\RequestProduct;
+use Elastic\Elasticsearch;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,9 +23,13 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::whereStatus(1)->orderByDesc('created_at')->paginate(20);
+        $products = Product::whereStatus(1)->orderByDesc('created_at');
+        if (!is_null($request->search)) {
+            return $this->search($products, $request->search);
+        }
+        $products = $products->paginate(20);
         return view('product.index', compact('products'));
     }
 
@@ -278,4 +283,21 @@ class ProductController extends Controller
         $requestProduct->delete();
         return redirect()->back();
     }
+
+    public function getProductsJson(Request $request)
+    {
+        $products = Product::whereStatus(1)->orderByDesc('created_at');
+        if (!is_null($request->search)) {
+            return $this->search($products, $request->search);
+        }
+        $products = $products->paginate(20);
+
+        return response()->json($products);
+    }
+
+    public function search($query, $search)
+    {
+        return response()->json($query->where('name', 'LIKE', "%$search%")->paginate(20));
+    }
+
 }

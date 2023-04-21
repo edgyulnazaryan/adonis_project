@@ -32,6 +32,9 @@ Route::group(['middleware' => ['auth', 'admin'], 'prefix' => 'admin'], function 
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::resource('product', ProductController::class)->only(['index', 'show']);
+    Route::get('/products/all', [App\Http\Controllers\ProductController::class, 'getProductsJson'])->name('get.products');
+
+//    Route::post('/product/search', [ProductController::class, 'search'])->name('product.search');
     Route::get('/product/{product}/cart', [ProductController::class, 'toggleButtonToCart'])->name('product.toggle_cart');
     Route::get('/product/{requestProduct}/request/confirm', [ProductController::class, 'orderConfirm'])->name('product.order.confirm');
     Route::get('/product/{requestProduct}/request/reject', [ProductController::class, 'orderReject'])->name('product.order.reject');

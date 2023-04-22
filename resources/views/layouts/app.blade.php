@@ -72,7 +72,7 @@
                                         {{ __('Logout') }}
                                     </a>
 
-                                    <a class="dropdown-item" href="{{ route('admin.dashboard') }}">Dashboard</a>
+                                    <a class="dropdown-item" href="{{ Auth::user()->is_admin ? route('admin.dashboard') : route('user.dashboard') }}">Dashboard</a>
 
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                         @csrf

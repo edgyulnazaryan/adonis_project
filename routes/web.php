@@ -30,6 +30,7 @@ Route::group(['middleware' => ['auth', 'admin'], 'prefix' => 'admin'], function 
 });
 
 Route::group(['middleware' => ['auth']], function () {
+    Route::get('/account', [\App\Http\Controllers\AccountController::class, 'dashboard'])->name('user.dashboard');
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::resource('product', ProductController::class)->only(['index', 'show']);
     Route::get('/products/all', [App\Http\Controllers\ProductController::class, 'getProductsJson'])->name('get.products');

@@ -16,15 +16,22 @@ class AccountController extends Controller
     {
         $user = Auth::user();
         $transactions = $this->getTransactions($user);
-        $users = $this->getUsers();
-        $products = $this->getProducts();
-        $requestedProducts = $this->getRequestProducts();
-        return view('dashboard', compact('transactions', 'users', 'products', 'requestedProducts'));
+
+        if($user->is_admin) {
+            $users = $this->getUsers();
+            $products = $this->getProducts();
+            $requestedProducts = $this->getRequestProducts();
+            return view('dashboard', compact('transactions', 'users', 'products', 'requestedProducts'));
+        }
+        return view('user-dashboard', compact('transactions'));
     }
 
     public function getTransactions($user)
     {
-        return Order::with('product')->where('user_id', $user->id)->orderByDesc('created_at')->get();
+        if (!$user->is_admin) {
+            return Order::with('product')->where('user_id', $user->id)->orderByDesc('created_at')->get();
+        }
+        return Order::with('product')->orderByDesc('created_at')->get();
     }
 
     public function getUsers()
@@ -46,7 +53,7 @@ class AccountController extends Controller
     {
         $user = Auth::user();
         if ($user->is_admin) {
-            return RequestProduct::where('user_id', $user->id)->where('status', 0)->count();
+            return RequestProduct::where('status', 0)->count();
         }
         return false;
     }

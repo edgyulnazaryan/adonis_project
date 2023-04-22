@@ -141,14 +141,17 @@
     }
 
 </style>
+
 <script>
     $(document).ready(function(){
         let inputAppended = false;
         let search = null
         let image_src = null
+        let orderForm = null
         let token = $('input[name="_token"]').val();
         searchProducts(search)
-        $(".span_order").click(function (e){
+        $(".span_order").on('click', function (e){
+            alert(1)
             let product_id = $(this).data('id');
             if(!inputAppended) {
                 $(this).parent().children('input[name=order_quantity]').attr('type', 'number')
@@ -191,11 +194,29 @@
                     }
                     for(let i=0; i<response.data.length; i++)
                     {
+
                         if (response.data[i].image == null) {
                             image_src = 'https://creazilla-store.fra1.digitaloceanspaces.com/cliparts/39361/shirt-clipart-md.png'
                         } else {
                             image_src = response.data[i].image
                         }
+
+                        if (response.data[i].quantity == 0) {
+                            orderForm = `<div class="d-flex">
+                                            <p class=""></p>
+                                            <form action="/product/{product}/request/order/${response.data[i].id}" method="POST">
+                                            <input type='hidden' name='_token' value={{ csrf_token() }}>
+                                            <span class="btn btn-primary badge badge-primary span_order" data-id="${response.data[i].id}" type="submit">
+                                                    By Order
+                                                </span>
+                                                <input type="hidden" value="1" min="1" name="order_quantity" placeholder="Input quantity" class="form-control mt-2">
+                                                <input type="hidden" name="request_order_btn" class="btn btn-success mt-2 request_order_btn" value="Send order">
+                                            </form>
+                                        </div>`
+                        } else {
+                            orderForm = ``;
+                        }
+
                         $(".search-result").append(
                             `
                             <div class="col-md-4 mt-3">
@@ -210,6 +231,7 @@
                                         <p class="product-name">Name : ${response.data[i].name}</p>
                                         <p class="product-price">Price : ${response.data[i].price}</p>
                                         <p class="product-quantity">Qnt. : ${response.data[i].quantity}</p>
+                                        ${orderForm}
                                     </div>
                                     <div class="card-footer">
                                         <a href="/product/${response.data[i].id}" class="btn btn-success">Show</a>

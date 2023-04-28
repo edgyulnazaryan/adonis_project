@@ -45,7 +45,7 @@
                 </div>
             </div>
         @endforeach--}}
-        {{ $products->links() }}
+{{--        {{ $products->links() }}--}}
     </div>
 </div>
 
@@ -150,21 +150,6 @@
         let orderForm = null
         let token = $('input[name="_token"]').val();
         searchProducts(search)
-        $(".span_order").on('click', function (e){
-            alert(1)
-            let product_id = $(this).data('id');
-            if(!inputAppended) {
-                $(this).parent().children('input[name=order_quantity]').attr('type', 'number')
-                $(this).parent().children('input[name=request_order_btn]').attr('type', 'submit')
-                inputAppended = true
-            } else {
-                $(this).parent().children('input[name=order_quantity]').attr('type', 'hidden')
-                $(this).parent().children('input[name=request_order_btn]').attr('type', 'hidden')
-                inputAppended = false
-            }
-            console.log(inputAppended)
-        })
-
 
         function searchProducts(search) {
             $('#loader').show();
@@ -206,7 +191,7 @@
                                             <p class=""></p>
                                             <form action="/product/{product}/request/order/${response.data[i].id}" method="POST">
                                             <input type='hidden' name='_token' value={{ csrf_token() }}>
-                                            <span class="btn btn-primary badge badge-primary span_order" data-id="${response.data[i].id}" type="submit">
+                                            <span onclick='orderProduct' class="btn btn-primary badge badge-primary span_order" data-id="${response.data[i].id}" type="submit">
                                                     By Order
                                                 </span>
                                                 <input type="hidden" value="1" min="1" name="order_quantity" placeholder="Input quantity" class="form-control mt-2">
@@ -255,6 +240,22 @@
             search = e.target.value
             searchProducts(search)
         })
+
+        function orderProduct()
+        {
+            alert(12)
+            let product_id = $(this).data('id');
+            if(!inputAppended) {
+                $(this).parent().children('input[name=order_quantity]').attr('type', 'number')
+                $(this).parent().children('input[name=request_order_btn]').attr('type', 'submit')
+                inputAppended = true
+            } else {
+                $(this).parent().children('input[name=order_quantity]').attr('type', 'hidden')
+                $(this).parent().children('input[name=request_order_btn]').attr('type', 'hidden')
+                inputAppended = false
+            }
+            console.log(inputAppended)
+        }
     })
 
 </script>

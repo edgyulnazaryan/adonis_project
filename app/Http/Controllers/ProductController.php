@@ -29,7 +29,7 @@ class ProductController extends Controller
         if (!is_null($request->search)) {
             return $this->search($products, $request->search);
         }
-        $products = $products->paginate(20);
+        $products = $products->get();
         return view('product.index', compact('products'));
     }
 

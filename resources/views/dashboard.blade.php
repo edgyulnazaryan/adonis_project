@@ -206,8 +206,10 @@
                     <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Price</th>
-                        <th>Qnt.</th>
+                        <th>Surname</th>
+                        <th>Phone</th>
+                        <th>Address</th>
+                        <th>Balance</th>
                         <th>Status</th>
                         <th>#</th>
                     </tr>
@@ -216,13 +218,16 @@
                     @foreach($suppliers as $supplier)
                         <tr>
                             <td>{{ $supplier->name }}</td>
-                            <td>{{ $supplier->price }}</td>
-                            <td>{{ $supplier->quantity }}</td>
+                            <td>{{ $supplier->surname }}</td>
+                            <td>{{ $supplier->phone }}</td>
+                            <td>{{ $supplier->address }}</td>
+                            <td>{{ $supplier->balance }}</td>
                             <td>{{ $supplier->status == 1 ? 'Active' : 'Deactive' }}</td>
                             <td>
                                 <div class="d-flex">
                                     <a href="{{ route('supplier.toggle.status', $supplier) }}" class="btn btn-outline-dark col-md-3 mr-2"><i class="fa fa-refresh"></i> {{ $supplier->status == 1 ? "Deactivate" : "Activate" }}</a>
                                     <a href="{{ route('supplier.edit', $supplier) }}" class="btn btn-outline-warning mr-2"><i class="fa fa-edit"></i> Edit</a>
+                                    <a href="{{ route('supplier.show', $supplier) }}" class="btn btn-outline-info mr-2"><i class="fa fa-eye"></i></a>
                                     <form action="{{ route('supplier.destroy', $supplier) }}" method="POST">
                                         @csrf
                                         @method('DELETE')

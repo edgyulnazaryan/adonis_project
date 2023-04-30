@@ -29,10 +29,6 @@
                         <p class="product-price">{{ $product->price }}</p>
                         <p class="product-quantity">{{ $product->quantity }}</p>
                     </div>
-                    <div class="card-footer">
-                        <a href="{{ route('product.show', $product) }}" class="btn btn-success">Show</a>
-
-                    </div>
                 </div>
             </div>
             <div class="col-md-3"></div>

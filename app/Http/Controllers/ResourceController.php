@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Resource;
 use App\Http\Controllers\Controller;
+use App\Models\Supplier;
 use Illuminate\Http\Request;
 
 class ResourceController extends Controller
@@ -32,7 +33,8 @@ class ResourceController extends Controller
      */
     public function create()
     {
-        //
+        $suppliers = Supplier::where('status', 1)->get();
+        return view('resource.create', compact('suppliers'));
     }
 
     /**
@@ -40,7 +42,18 @@ class ResourceController extends Controller
      */
     public function store(Request $request)
     {
-        $data = Resource::create($request->all());
+        $request->validate([
+            'image' => 'image|max:4096',
+        ]);
+        $inputs = $request->all();
+        if (!is_null($request->image)) {
+            $image = $request->file('image');
+            $imageName = time() . '_' . $image->getClientOriginalName();
+            $image->move(public_path('images'), $imageName);
+            $inputs['image'] = $imageName;
+        }
+        $data = Resource::create($inputs);
+        return redirect()->back();
         return response()->json($data);
     }
 
@@ -81,5 +94,11 @@ class ResourceController extends Controller
     public function search($query, $search)
     {
         return response()->json($query->where('name', 'LIKE', "%$search%")->paginate(20));
+    }
+
+    public function changeStatus(Resource $resource)
+    {
+        $resource->update(['status' => !$resource->status]);
+        return redirect()->back();
     }
 }

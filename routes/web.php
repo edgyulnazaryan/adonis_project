@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ResourceController;
+use App\Http\Controllers\SupplierController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -26,10 +27,14 @@ Route::group(['middleware' => ['auth', 'admin'], 'prefix' => 'admin'], function 
     Route::post('/notifications', [\App\Http\Controllers\AccountController::class, 'getNotification'])->name('admin.notifications');
     Route::resource('product', ProductController::class);
     Route::get('/product/toggle/status/{product}', [ProductController::class, 'changeStatus'])->name('product.toggle.status');
+    Route::get('/resource/toggle/status/{resource}', [ResourceController::class, 'changeStatus'])->name('resources.toggle.status');
+    Route::get('/supplier/toggle/status/{supplier}', [SupplierController::class, 'changeStatus'])->name('supplier.toggle.status');
     Route::post('/product/increase', [ProductController::class, 'increaseQuantity'])->name('product.increase_quantity');
     Route::post('/product/decrease', [ProductController::class, 'decreaseQuantity'])->name( 'product.decrease_quantity');
     Route::get('/resources/all', [ResourceController::class, 'getResourcesJson'])->name('get.resources');
+    Route::get('/suppliers/all', [SupplierController::class, 'getSupplierJson'])->name('get.suppliers');
     Route::resource('resources', ResourceController::class);
+    Route::resource('supplier', SupplierController::class);
 });
 
 Route::group(['middleware' => ['auth']], function () {

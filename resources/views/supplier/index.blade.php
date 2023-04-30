@@ -7,9 +7,14 @@
         </div>
     </div>
     <div class="row search-result">
-
+        <!-- Render initial search results here -->
+        @include('partials.search-results', ['products' => $products])
     </div>
+{{--    <div class="row search-result d-none"></div>--}}
+    <div class="row product_data">
 
+        {{ $suppliers->links() }}
+    </div>
 </div>
 
 <input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -104,6 +109,7 @@
     }
 
 </style>
+
 <script>
     $(document).ready(function(){
         let inputAppended = false;
@@ -111,13 +117,26 @@
         let image_src = null
         let token = $('input[name="_token"]').val();
         searchProducts(search)
+        $(".span_order").click(function (e){
+            let product_id = $(this).data('id');
+            if(!inputAppended) {
+                $(this).parent().children('input[name=order_quantity]').attr('type', 'number')
+                $(this).parent().children('input[name=request_order_btn]').attr('type', 'submit')
+                inputAppended = true
+            } else {
+                $(this).parent().children('input[name=order_quantity]').attr('type', 'hidden')
+                $(this).parent().children('input[name=request_order_btn]').attr('type', 'hidden')
+                inputAppended = false
+            }
+            console.log(inputAppended)
+        })
+
 
         function searchProducts(search) {
             $('#loader').show();
             $(".search-result").html('')
-            let dataHtml = ''
             $.ajax({
-                url: "/admin/resources/all",
+                url: "/suppliers/all",
                 method: 'GET',
                 dataType: 'json',
                 headers: {
@@ -142,17 +161,18 @@
                     for(let i=0; i<response.data.length; i++)
                     {
                         if (response.data[i].image == null) {
-                            image_src = 'https://img.icons8.com/?size=512&id=zU4mwUBuKSXl&format=png'
+                            image_src = 'https://creazilla-store.fra1.digitaloceanspaces.com/cliparts/39361/shirt-clipart-md.png'
                         } else {
                             image_src = '/images/'+response.data[i].image
                         }
-                        dataHtml += `
+                        $(".search-result").append(
+                            `
                             <div class="col-md-4 mt-3">
                                 <div class="card">
                                     <div class="card-header d-flex justify-content-center">
                                         <img
                                             src=${image_src}
-                                            style="width: 100px; height: 80px"
+                                            style="width: 100px;"
                                         >
                                     </div>
                                     <div class="card-body">
@@ -160,12 +180,12 @@
                                         <p class="product-price">Price : ${response.data[i].price}</p>
                                         <p class="product-quantity">Qnt. : ${response.data[i].quantity}</p>
                                     </div>
-
+                                    <div class="card-footer">
+                                        <a href="/product/${response.data[i].id}" class="btn btn-success">Show</a>
+                                    </div>
                                 </div>
                             </div>
                             `
-                        $(".search-result").html(
-                            dataHtml
                         )
                     }
                 },

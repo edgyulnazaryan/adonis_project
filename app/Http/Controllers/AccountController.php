@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\RequestProduct;
+use App\Models\Resource;
+use App\Models\Supplier;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,8 +20,10 @@ class AccountController extends Controller
         $transactions = $this->getTransactions($user);
         $users = $this->getUsers();
         $products = $this->getProducts();
+        $suppliers = $this->getSuppliers();
         $requestedProducts = $this->getRequestProducts();
-        return view('dashboard', compact('transactions', 'users', 'products', 'requestedProducts'));
+        $resources = $this->getResources();
+        return view('dashboard', compact('suppliers', 'resources', 'transactions', 'users', 'products', 'requestedProducts'));
     }
 
     public function getTransactions($user)
@@ -49,5 +53,15 @@ class AccountController extends Controller
             return RequestProduct::where('user_id', $user->id)->where('status', 0)->count();
         }
         return false;
+    }
+
+    public function getResources()
+    {
+        return Resource::all();
+    }
+
+    public function getSuppliers()
+    {
+        return Supplier::all();
     }
 }

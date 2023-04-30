@@ -18,6 +18,12 @@
             <li class="nav-item">
                 <a class="nav-link" data-toggle="tab" href="#request">Request Product</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#resources">Resources</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#supplier">Supplier</a>
+            </li>
         </ul>
 
         <div class="tab-content">
@@ -146,6 +152,84 @@
                             <td>
                                 <a href="{{ route('product.order.confirm', $requestedProduct) }}" class="btn btn-outline-success">Confirm</a>
                                 <a href="{{ route('product.order.reject', $requestedProduct) }}" class="btn btn-outline-danger">Reject</a>
+                            </td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="tab-pane fade" id="resources">
+                <h2>Resource <a href="{{ route('resources.create') }}" class="btn btn-success"><i class="fa fa-plus"></i></a></h2>
+
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Currency</th>
+                        <th>Qnt.</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach($resources as $resource)
+                        <tr>
+                            <td>{{ $resource->name }}</td>
+                            <td>{{ $resource->price }}</td>
+                            <td>{{ $resource->currency }}</td>
+                            <td>{{ $resource->quantity }} {{ $resource->unit_measurement }}</td>
+                            <td>{{ $resource->status == 1 ? 'Active' : 'Deactive' }}</td>
+                            <td>
+                                <div class="d-flex">
+                                    <a href="{{ route('resources.toggle.status', $resource) }}" class="btn btn-outline-dark col-md-3 mr-2"><i class="fa fa-refresh"></i> {{ $resource->status == 1 ? "Deactivate" : "Activate" }}</a>
+                                    <a href="{{ route('resources.edit', $resource) }}" class="btn btn-outline-warning mr-2"><i class="fa fa-edit"></i> Edit</a>
+                                    <form action="{{ route('resources.destroy', $resource) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-outline-danger"><i class="fa fa-trash"></i></button>
+                                    </form>
+                                </div>
+
+                            </td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="tab-pane fade" id="supplier">
+                <h2>Supplier <a href="{{ route('supplier.create') }}" class="btn btn-success"><i class="fa fa-plus"></i></a></h2>
+
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Qnt.</th>
+                        <th>Status</th>
+                        <th>#</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach($suppliers as $supplier)
+                        <tr>
+                            <td>{{ $supplier->name }}</td>
+                            <td>{{ $supplier->price }}</td>
+                            <td>{{ $supplier->quantity }}</td>
+                            <td>{{ $supplier->status == 1 ? 'Active' : 'Deactive' }}</td>
+                            <td>
+                                <div class="d-flex">
+                                    <a href="{{ route('supplier.toggle.status', $supplier) }}" class="btn btn-outline-dark col-md-3 mr-2"><i class="fa fa-refresh"></i> {{ $supplier->status == 1 ? "Deactivate" : "Activate" }}</a>
+                                    <a href="{{ route('supplier.edit', $supplier) }}" class="btn btn-outline-warning mr-2"><i class="fa fa-edit"></i> Edit</a>
+                                    <form action="{{ route('supplier.destroy', $supplier) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-outline-danger"><i class="fa fa-trash"></i></button>
+                                    </form>
+                                </div>
+
                             </td>
                         </tr>
                     @endforeach

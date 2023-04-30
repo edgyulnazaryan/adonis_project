@@ -5,10 +5,10 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header">{{ __('Create Product') }}</div>
+                    <div class="card-header">{{ __('Create Resource') }}</div>
 
                     <div class="card-body">
-                        <form method="POST" action="{{ route('product.store') }}" enctype="multipart/form-data">
+                        <form method="POST" action="{{ route('resources.store') }}" enctype="multipart/form-data">
                             @csrf
 
                             <div class="form-group">
@@ -32,9 +32,33 @@
                             </div>
 
                             <div class="form-group">
+                                <label for="currency">{{ __('Currency') }}</label>
+                                <input id="currency" type="number" class="form-control @error('currency') is-invalid @enderror" name="currency" value="{{ old('currency') }}" required>
+                                @error('price')
+                                <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+
+                            <div class="form-group">
                                 <label for="quantity">{{ __('Quantity') }}</label>
                                 <input id="quantity" type="number" class="form-control @error('quantity') is-invalid @enderror" name="quantity" value="{{ old('quantity') }}" required>
                                 @error('quantity')
+                                <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+
+                            <div class="form-group">
+                                <label for="unit_measurement">{{ __('Unit of Measurement') }}</label>
+                                <select name="unit_measurement" id="unit_measurement" class="form-control @error('unit_measurement') is-invalid @enderror">
+                                    <option value="M">M</option>
+                                    <option value="KG">KG</option>
+                                    <option value="PC">PC.</option>
+                                </select>
+                                @error('unit_measurement')
                                 <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -48,25 +72,43 @@
                                     <option value="0">{{ __('Inactive') }}</option>
                                 </select>
                                 @error('status')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+
+                            <div class="form-group">
+                                <label for="image">{{ __('Image') }}</label>
+                                <input id="image" type="file" class="form-control @error('image') is-invalid @enderror" name="image" >
+                                @error('image')
+                                <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                                @enderror
+                            </div>
+
+                            <div class="form-group">
+                                <label for="supplier_id">{{ __('Supplier') }}</label>
+                                <select name="supplier_id" id="supplier_id" class="form-control @error('supplier_id') is-invalid @enderror">
+                                    @foreach($suppliers as $supplier)
+                                        <option value={{ $supplier->id }}>{{ $supplier->name }} {{ $supplier->surname }}</option>
+                                    @endforeach
+                                </select>
+                                @error('supplier_id')
                                 <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
-    @enderror
-                                <div class="form-group">
-                                    <label for="image">{{ __('Image') }}</label>
-                                    <input id="image" type="file" class="form-control @error('image') is-invalid @enderror" name="image" >
-                                    @error('image')
-                                    <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                                    @enderror
-                                </div>
+                                @enderror
+                            </div>
 
-                                <div class="form-group mb-0">
-                                    <button type="submit" class="btn btn-primary">
-                                        {{ __('Create') }}
-                                    </button>
-                                </div>
+                            <div class="form-group mb-0">
+                                <button type="submit" class="btn btn-primary">
+                                    {{ __('Create') }}
+                                </button>
+                            </div>
+
+
                         </form>
                     </div>
                 </div>

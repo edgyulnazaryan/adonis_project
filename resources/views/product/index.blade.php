@@ -141,6 +141,7 @@
     }
 
 </style>
+
 <script>
     $(document).ready(function(){
         let inputAppended = false;
@@ -194,7 +195,7 @@
                         if (response.data[i].image == null) {
                             image_src = 'https://creazilla-store.fra1.digitaloceanspaces.com/cliparts/39361/shirt-clipart-md.png'
                         } else {
-                            image_src = response.data[i].image
+                            image_src = '/images/'+response.data[i].image
                         }
                         $(".search-result").append(
                             `

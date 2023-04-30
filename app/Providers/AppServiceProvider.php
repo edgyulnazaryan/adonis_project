@@ -18,7 +18,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ClientInterface::class, function ($app) {
             return new Client();
         });
-
     }
 
     /**

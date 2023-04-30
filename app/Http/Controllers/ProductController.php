@@ -46,7 +46,17 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $product = Product::create($request->all());
+        $request->validate([
+            'image' => 'image|max:4096',
+        ]);
+        $inputs = $request->all();
+        if (!is_null($request->image)) {
+            $image = $request->file('image');
+            $imageName = time() . '_' . $image->getClientOriginalName();
+            $image->move(public_path('images'), $imageName);
+            $inputs['image'] = $imageName;
+        }
+        $product = Product::create($inputs);
         $productCart = Cart::where('product_id', $product->id)->first();
         return redirect()->route('admin.dashboard');
 //        return view('product.show', compact('product', 'productCart'));

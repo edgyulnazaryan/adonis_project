@@ -8,44 +8,12 @@
     </div>
     <div class="row search-result">
         <!-- Render initial search results here -->
-        @include('partials.search-results', ['products' => $products])
+        @include('partials.search-results', ['suppliers' => $suppliers])
     </div>
 {{--    <div class="row search-result d-none"></div>--}}
     <div class="row product_data">
-        {{--@foreach($products as $product)
-            <div class="col-md-4 mt-3">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-center">
-                        <img
-                            src="{{ $product->image ?? 'https://creazilla-store.fra1.digitaloceanspaces.com/cliparts/39361/shirt-clipart-md.png' }}"
-                            style="width: 100px;"
-                        >
-                    </div>
-                    <div class="card-body">
-                        <p class="product-name">Name : {{ $product->name }}</p>
-                        <p class="product-price">Price : {{ $product->price }}</p>
-                        <p class="product-quantity">Qnt. : {{ $product->quantity }}</p>
-                        @if($product->quantity == 0)
-                        <div class="d-flex">
-                            <p class=""></p>
-                            <form action="{{ route('product.request.order', $product) }}" method="POST">
-                                @csrf
-                                <span class="btn btn-primary badge badge-primary span_order" data-id="{{$product->id}}" type="submit">
-                                    By Order
-                                </span>
-                                <input type="hidden" value="1" min="1" name="order_quantity" placeholder="Input quantity" class="form-control mt-2">
-                                <input type="hidden" name="request_order_btn" class="btn btn-success mt-2 request_order_btn" value="Send order">
-                            </form>
-                        </div>
-                        @endif
-                    </div>
-                    <div class="card-footer">
-                        <a href="{{ route('product.show', $product) }}" class="btn btn-success">Show</a>
-                    </div>
-                </div>
-            </div>
-        @endforeach--}}
-        {{ $products->links() }}
+
+        {{ $suppliers->links() }}
     </div>
 </div>
 
@@ -144,31 +112,15 @@
 
 <script>
     $(document).ready(function(){
-        let inputAppended = false;
         let search = null
-        let image_src = null
         let token = $('input[name="_token"]').val();
-        searchProducts(search)
-        $(".span_order").click(function (e){
-            let product_id = $(this).data('id');
-            if(!inputAppended) {
-                $(this).parent().children('input[name=order_quantity]').attr('type', 'number')
-                $(this).parent().children('input[name=request_order_btn]').attr('type', 'submit')
-                inputAppended = true
-            } else {
-                $(this).parent().children('input[name=order_quantity]').attr('type', 'hidden')
-                $(this).parent().children('input[name=request_order_btn]').attr('type', 'hidden')
-                inputAppended = false
-            }
-            console.log(inputAppended)
-        })
+        searchSupplier(search)
 
-
-        function searchProducts(search) {
+        function searchSupplier(search) {
             $('#loader').show();
             $(".search-result").html('')
             $.ajax({
-                url: "/products/all",
+                url: "/admin/suppliers/all",
                 method: 'GET',
                 dataType: 'json',
                 headers: {
@@ -192,28 +144,21 @@
                     }
                     for(let i=0; i<response.data.length; i++)
                     {
-                        if (response.data[i].image == null) {
-                            image_src = 'https://creazilla-store.fra1.digitaloceanspaces.com/cliparts/39361/shirt-clipart-md.png'
-                        } else {
-                            image_src = '/images/'+response.data[i].image
-                        }
                         $(".search-result").append(
                             `
                             <div class="col-md-4 mt-3">
                                 <div class="card">
-                                    <div class="card-header d-flex justify-content-center">
-                                        <img
-                                            src=${image_src}
-                                            style="width: 100px;"
-                                        >
-                                    </div>
+
                                     <div class="card-body">
-                                        <p class="product-name">Name : ${response.data[i].name}</p>
-                                        <p class="product-price">Price : ${response.data[i].price}</p>
-                                        <p class="product-quantity">Qnt. : ${response.data[i].quantity}</p>
+                                        <p class="supplier-name">Name : ${response.data[i].name}</p>
+                                        <p class="supplier-price">Surname : ${response.data[i].surname}</p>
+                                        <p class="supplier-balance">Balance : ${response.data[i].balance}</p>
+                                        <p class="supplier-phone">Phone : ${response.data[i].phone}</p>
+                                        <p class="supplier-address">Address : ${response.data[i].address}</p>
+                                        <p class="supplier-note">Note : ${response.data[i].note ?? ''}</p>
                                     </div>
                                     <div class="card-footer">
-                                        <a href="/product/${response.data[i].id}" class="btn btn-success">Show</a>
+                                        <a href="/admin/supplier/${response.data[i].id}" class="btn btn-success">Show</a>
                                     </div>
                                 </div>
                             </div>
@@ -232,7 +177,7 @@
 
         $("#search_input").on("input", function (e){
             search = e.target.value
-            searchProducts(search)
+            searchSupplier(search)
         })
     })
 

@@ -39,7 +39,7 @@
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item"><a href="{{ route('product.index') }}" class="btn btn-outline-dark">Products</a></li>
                         <li class="nav-item ml-2"><a href="{{ route('cart.index') }}" class="btn btn-outline-dark">Cart</a></li>
-                        @if(\Illuminate\Support\Facades\Auth::user()->is_admin)
+                        @if(Auth::user() && \Illuminate\Support\Facades\Auth::user()->is_admin)
                             <li class="nav-item ml-2"><a href="{{ route('resources.index') }}" class="btn btn-outline-dark">Resources</a></li>
                             <li class="nav-item ml-2"><a href="{{ route('supplier.index') }}" class="btn btn-outline-dark">Suppliers</a></li>
                         @endif
@@ -75,9 +75,9 @@
                                                      document.getElementById('logout-form').submit();">
                                         {{ __('Logout') }}
                                     </a>
-
-                                    <a class="dropdown-item" href="{{ route('admin.dashboard') }}">Dashboard</a>
-
+                                    @if(Auth::user() && \Illuminate\Support\Facades\Auth::user()->is_admin)
+                                        <a class="dropdown-item" href="{{ route('admin.dashboard') }}">Dashboard</a>
+                                    @endif
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                         @csrf
                                     </form>

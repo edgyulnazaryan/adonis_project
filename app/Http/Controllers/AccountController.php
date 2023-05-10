@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Employer;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\RequestProduct;
@@ -21,9 +22,10 @@ class AccountController extends Controller
         $users = $this->getUsers();
         $products = $this->getProducts();
         $suppliers = $this->getSuppliers();
+        $employers = $this->getEmployers();
         $requestedProducts = $this->getRequestProducts();
         $resources = $this->getResources();
-        return view('dashboard', compact('suppliers', 'resources', 'transactions', 'users', 'products', 'requestedProducts'));
+        return view('dashboard', compact('employers', 'suppliers', 'resources', 'transactions', 'users', 'products', 'requestedProducts'));
     }
 
     public function getTransactions($user)
@@ -63,5 +65,9 @@ class AccountController extends Controller
     public function getSuppliers()
     {
         return Supplier::all();
+    }
+    public function getEmployers()
+    {
+        return Employer::all();
     }
 }

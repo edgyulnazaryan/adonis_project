@@ -22,7 +22,10 @@
                 <a class="nav-link" data-toggle="tab" href="#resources">Resources</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" data-toggle="tab" href="#supplier">Supplier</a>
+                <a class="nav-link" data-toggle="tab" href="#supplier">Suppliers</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#employer">Employers</a>
             </li>
         </ul>
 
@@ -229,6 +232,53 @@
                                     <a href="{{ route('supplier.edit', $supplier) }}" class="btn btn-outline-warning mr-2"><i class="fa fa-edit"></i> Edit</a>
                                     <a href="{{ route('supplier.show', $supplier) }}" class="btn btn-outline-info mr-2"><i class="fa fa-eye"></i></a>
                                     <form action="{{ route('supplier.destroy', $supplier) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-outline-danger"><i class="fa fa-trash"></i></button>
+                                    </form>
+                                </div>
+
+                            </td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="tab-pane fade" id="employer">
+                <h2>Employer <a href="{{ route('employer.create') }}" class="btn btn-success"><i class="fa fa-plus"></i></a></h2>
+
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Surname</th>
+                        <th>Phone</th>
+                        <th>Address</th>
+                        <th>Salary</th>
+                        <th>Balance</th>
+                        <th>Date of Birth</th>
+                        <th>Status</th>
+                        <th>#</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach($employers as $employer)
+                        <tr>
+                            <td>{{ $employer->name }}</td>
+                            <td>{{ $employer->surname }}</td>
+                            <td>{{ $employer->phone }}</td>
+                            <td>{{ $employer->address }}</td>
+                            <td>{{ $employer->salary }}</td>
+                            <td>{{ $employer->balance }}</td>
+                            <td>{{ $employer->date_of_birth }}</td>
+                            <td>{{ $employer->status == 1 ? 'Active' : 'Deactive' }}</td>
+                            <td>
+                                <div class="d-flex">
+                                    <a href="{{ route('employer.toggle.status', $employer) }}" class="btn btn-outline-dark col-md-3 mr-2"><i class="fa fa-refresh"></i> {{ $employer->status == 1 ? "Deactivate" : "Activate" }}</a>
+                                    <a href="{{ route('employer.edit', $employer) }}" class="btn btn-outline-warning mr-2"><i class="fa fa-edit"></i> Edit</a>
+                                    <a href="{{ route('employer.show', $employer) }}" class="btn btn-outline-info mr-2"><i class="fa fa-eye"></i></a>
+                                    <form action="{{ route('employer.destroy', $employer) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-outline-danger"><i class="fa fa-trash"></i></button>

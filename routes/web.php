@@ -5,6 +5,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\EmployerController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -29,12 +30,15 @@ Route::group(['middleware' => ['auth', 'admin'], 'prefix' => 'admin'], function 
     Route::get('/product/toggle/status/{product}', [ProductController::class, 'changeStatus'])->name('product.toggle.status');
     Route::get('/resource/toggle/status/{resource}', [ResourceController::class, 'changeStatus'])->name('resources.toggle.status');
     Route::get('/supplier/toggle/status/{supplier}', [SupplierController::class, 'changeStatus'])->name('supplier.toggle.status');
+    Route::get('/employer/toggle/status/{employer}', [EmployerController::class, 'changeStatus'])->name('employer.toggle.status');
     Route::post('/product/increase', [ProductController::class, 'increaseQuantity'])->name('product.increase_quantity');
     Route::post('/product/decrease', [ProductController::class, 'decreaseQuantity'])->name( 'product.decrease_quantity');
     Route::get('/resources/all', [ResourceController::class, 'getResourcesJson'])->name('get.resources');
     Route::get('/suppliers/all', [SupplierController::class, 'getSupplierJson'])->name('get.suppliers');
+    Route::get('/employers/all', [EmployerController::class, 'getEmployerJson'])->name('get.employers');
     Route::resource('resources', ResourceController::class);
     Route::resource('supplier', SupplierController::class);
+    Route::resource('employer', EmployerController::class);
 });
 
 Route::group(['middleware' => ['auth']], function () {

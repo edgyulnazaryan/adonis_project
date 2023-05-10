@@ -42,6 +42,7 @@
                         @if(Auth::user() && \Illuminate\Support\Facades\Auth::user()->is_admin)
                             <li class="nav-item ml-2"><a href="{{ route('resources.index') }}" class="btn btn-outline-dark">Resources</a></li>
                             <li class="nav-item ml-2"><a href="{{ route('supplier.index') }}" class="btn btn-outline-dark">Suppliers</a></li>
+                            <li class="nav-item ml-2"><a href="{{ route('employer.index') }}" class="btn btn-outline-dark">Employers</a></li>
                         @endif
                     </ul>
 

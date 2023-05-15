@@ -2,13 +2,18 @@
 
 namespace App\Models;
 
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
-class Employer extends Model
+
+class Employer extends Authenticatable
 {
-    use HasFactory;
+    use HasApiTokens, HasFactory, Notifiable;
 
+    protected $guard = "employer";
     protected $fillable =
         [
             'name',
@@ -31,5 +36,10 @@ class Employer extends Model
         [
             'status' => 'boolean'
         ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 
 }

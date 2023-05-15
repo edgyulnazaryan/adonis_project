@@ -20,11 +20,14 @@ class RedirectIfAuthenticated
         $guards = empty($guards) ? [null] : $guards;
 
         foreach ($guards as $guard) {
-            if (Auth::guard($guard)->check()) {
-                return redirect(RouteServiceProvider::HOME);
+            if ($guard == "employer" && Auth::guard($guard)->check()) {
+                return redirect('/employer/dashboard');
+            }
+            if ($guard == "web" && Auth::guard($guard)->check()) {
+//                dd(123);
+                return redirect('/home');
             }
         }
-
         return $next($request);
     }
 }

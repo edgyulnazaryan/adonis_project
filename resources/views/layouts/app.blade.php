@@ -71,14 +71,18 @@
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="{{ route('logout') }}"
-                                       onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                                        {{ __('Logout') }}
-                                    </a>
+
                                     @if(Auth::user() && \Illuminate\Support\Facades\Auth::user()->is_admin)
                                         <a class="dropdown-item" href="{{ route('admin.dashboard') }}">Dashboard</a>
                                     @endif
+                                    @if(Auth::guard()->name == 'employer')
+                                        <a class="dropdown-item" href="{{ route('employer.dashboard') }}">My Profile</a>
+                                    @endif
+                                    <a class="dropdown-item" href="{{ route('logout') }}"
+                                       onclick="event.preventDefault();
+                                                 document.getElementById('logout-form').submit();">
+                                        {{ __('Logout') }}
+                                    </a>
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                         @csrf
                                     </form>

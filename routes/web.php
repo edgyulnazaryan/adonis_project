@@ -23,10 +23,11 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::group(['middleware' => ['auth', 'admin'], 'prefix' => 'admin'], function () {
+Route::group(['middleware' => ['auth:web', 'admin'], 'prefix' => 'admin'], function () {
+//    dd(\Illuminate\Support\Facades\Auth::guard());
     Route::get('/', [\App\Http\Controllers\AccountController::class, 'dashboard'])->name('admin.dashboard');
     Route::post('/notifications', [\App\Http\Controllers\AccountController::class, 'getNotification'])->name('admin.notifications');
-    Route::resource('product', ProductController::class);
+    Route::resource('product', ProductController::class)->except(['index', 'show']);
     Route::get('/product/toggle/status/{product}', [ProductController::class, 'changeStatus'])->name('product.toggle.status');
     Route::get('/resource/toggle/status/{resource}', [ResourceController::class, 'changeStatus'])->name('resources.toggle.status');
     Route::get('/supplier/toggle/status/{supplier}', [SupplierController::class, 'changeStatus'])->name('supplier.toggle.status');
@@ -38,10 +39,12 @@ Route::group(['middleware' => ['auth', 'admin'], 'prefix' => 'admin'], function 
     Route::get('/employers/all', [EmployerController::class, 'getEmployerJson'])->name('get.employers');
     Route::resource('resources', ResourceController::class);
     Route::resource('supplier', SupplierController::class);
+
     Route::resource('employer', EmployerController::class);
 });
 
-Route::group(['middleware' => ['auth']], function () {
+Route::group(['middleware' => ['auth:web,employer']], function () {
+
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::resource('product', ProductController::class)->only(['index', 'show']);
     Route::get('/products/all', [ProductController::class, 'getProductsJson'])->name('get.products');
@@ -57,3 +60,5 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('cart', CartController::class);
 
 });
+
+Route::get('/employer/dashboard', [EmployerController::class, 'myProfile'])->name('employer.dashboard')->middleware('auth:employer');

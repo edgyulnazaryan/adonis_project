@@ -28,6 +28,7 @@ return new class extends Migration
             $table->tinyInteger('status')->default(1);
             $table->string('note')->nullable();
             $table->string('image')->nullable();
+            $table->tinyInteger('is_online')->default(0);
             $table->timestamps();
         });
     }

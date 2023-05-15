@@ -71,7 +71,7 @@ class EmployerController extends Controller
         $password = $inputs['password'];
         $inputs['password'] = Hash::make($inputs['password']);
         $data = Employer::create($inputs);
-        $this->sendSMS($data->phone, $password);
+//        $this->sendSMS($data->phone, $password);
         return redirect()->back();
     }
 
@@ -124,5 +124,10 @@ class EmployerController extends Controller
                 'body' => 'Խնդրում ենք չուղարկել ոչ մեկի, սա Ձեր գաղտնաբառն է => ' . $password
             ]
         );
+    }
+
+    public function myProfile()
+    {
+        return view('employer.account');
     }
 }

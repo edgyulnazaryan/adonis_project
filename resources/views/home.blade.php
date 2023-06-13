@@ -4,7 +4,6 @@
 <div class="container">
     @if(\Session::has('error'))
         <div class="alert alert-danger">
-            @dd(2)
             {{\Session::get('error')}}
         </div>
     @endif
@@ -25,6 +24,7 @@
             </div>
         </div>
         <div class="col-md-4">
+            @if(\Illuminate\Support\Facades\Auth::user()->is_admin)
             <div class="card">
                 <div class="card-header">{{ __('Active Employers') }}</div>
 
@@ -38,7 +38,7 @@
                     <ul class="list-group">
                         @foreach($activeEmployers as $activeEmployer)
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                {{ $activeEmployer->name . ' ' . $activeEmployer->surname }}
+                                <a href="{{ route('employer.show', $activeEmployer) }}" class="text-monospace text-decoration-none text-reset">{{ $activeEmployer->name . ' ' . $activeEmployer->surname }}</a>
                                 @if($activeEmployer->is_online)
                                 <span class="badge bg-success rounded-pill">Online</span>
                                 @else
@@ -50,6 +50,7 @@
                     @endif
                 </div>
             </div>
+            @endif
         </div>
     </div>
 </div>
@@ -72,3 +73,4 @@
     }
 
 </style>
+

@@ -19,6 +19,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
+    <input type="hidden" id="authUserId" value="{{ !is_null(\Illuminate\Support\Facades\Auth::user()) ? \Illuminate\Support\Facades\Auth::user()->id : 0 }}">
+
 
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
@@ -39,11 +42,6 @@
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item"><a href="{{ route('product.index') }}" class="btn btn-outline-dark">Products</a></li>
                         <li class="nav-item ml-2"><a href="{{ route('cart.index') }}" class="btn btn-outline-dark">Cart</a></li>
-                        @if(Auth::user() && \Illuminate\Support\Facades\Auth::user()->is_admin)
-                            <li class="nav-item ml-2"><a href="{{ route('resources.index') }}" class="btn btn-outline-dark">Resources</a></li>
-                            <li class="nav-item ml-2"><a href="{{ route('supplier.index') }}" class="btn btn-outline-dark">Suppliers</a></li>
-                            <li class="nav-item ml-2"><a href="{{ route('employer.index') }}" class="btn btn-outline-dark">Employers</a></li>
-                        @endif
                     </ul>
 
                     <!-- Right Side Of Navbar -->
@@ -75,6 +73,9 @@
                                     @if(Auth::user() && \Illuminate\Support\Facades\Auth::user()->is_admin)
                                         <a class="dropdown-item" href="{{ route('admin.dashboard') }}">Dashboard</a>
                                     @endif
+                                    @if(Auth::user() && !\Illuminate\Support\Facades\Auth::user()->is_admin && Auth::guard()->name != 'employer')
+                                        <a class="dropdown-item" href="{{ route('user.dashboard') }}">My profile</a>
+                                    @endif
                                     @if(Auth::guard()->name == 'employer')
                                         <a class="dropdown-item" href="{{ route('employer.dashboard') }}">My Profile</a>
                                     @endif
@@ -93,15 +94,45 @@
                 </div>
             </div>
         </nav>
-
+{{--        @include('layouts.sidebar')--}}
         <main class="py-4">
             @yield('content')
         </main>
     </div>
     <input type="hidden" name="_token" value="{{ csrf_token() }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.js"></script>
+
+    <script>
+        let token = $('input[name="_token"]').val();
+
+        const socketUrl = 'http://localhost:8000'; // Replace with your Socket.IO server URL
+
+        const socket = io(socketUrl, {
+            autoConnect: true,
+            transports: ['websocket', 'polling'],
+            forceNew: true,
+            reconnectionDelay: 50,
+            path: '/websocket',
+            auth: (cb) => {
+                cb({
+                    token: `${token}`,
+                });
+            },
+        });
+
+        socket.connect();
+
+        socket.on('connect', () => {
+            socket.emit('online');
+            // alert(1)
+        });
+    </script>
+
     <script>
         $(document).ready(function (){
+
             let token = $('input[name="_token"]').val();
+
             $.ajax(
                 {
                     url: "{{ route('admin.notifications') }}",
@@ -112,6 +143,19 @@
                     },
                     success: function(count) {
                         $(".notification_span").append(count)
+
+
+                        // var socket = $.simpleWebSocket({
+                        //     url: 'ws://127.0.0.1:3000/',
+                        //     protocols: 'your_protocol', // optional
+                        //     timeout: 20000, // optional, default timeout between connection attempts
+                        //     attempts: 60, // optional, default attempts until closing connection
+                        //     dataType: 'json' // optional (xml, json, text), default json
+                        // });
+                        //
+                        // socket.connect();
+                        //
+                        // socket.isConnected(); // or: socket.isConnected(function(connected) {});
                     },
                     error: function(error) {
                         console.log(error);

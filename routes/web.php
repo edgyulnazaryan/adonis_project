@@ -6,6 +6,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\EmployerController;
+use App\Http\Controllers\AccountController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -25,12 +26,14 @@ Auth::routes();
 
 Route::group(['middleware' => ['auth:web', 'admin'], 'prefix' => 'admin'], function () {
 //    dd(\Illuminate\Support\Facades\Auth::guard());
-    Route::get('/', [\App\Http\Controllers\AccountController::class, 'dashboard'])->name('admin.dashboard');
-    Route::post('/notifications', [\App\Http\Controllers\AccountController::class, 'getNotification'])->name('admin.notifications');
+    Route::get('/', [AccountController::class, 'dashboard'])->name('admin.dashboard');
+    Route::post('/notifications', [AccountController::class, 'getNotification'])->name('admin.notifications');
+
     Route::resource('product', ProductController::class)->except(['index', 'show']);
     Route::get('/product/toggle/status/{product}', [ProductController::class, 'changeStatus'])->name('product.toggle.status');
     Route::get('/resource/toggle/status/{resource}', [ResourceController::class, 'changeStatus'])->name('resources.toggle.status');
     Route::get('/supplier/toggle/status/{supplier}', [SupplierController::class, 'changeStatus'])->name('supplier.toggle.status');
+    Route::get('/position/toggle/status/position/{position}', [EmployerController::class, 'changeStatusPosition'])->name('position.toggle.status');
     Route::get('/employer/toggle/status/{employer}', [EmployerController::class, 'changeStatus'])->name('employer.toggle.status');
     Route::post('/product/increase', [ProductController::class, 'increaseQuantity'])->name('product.increase_quantity');
     Route::post('/product/decrease', [ProductController::class, 'decreaseQuantity'])->name( 'product.decrease_quantity');
@@ -41,6 +44,11 @@ Route::group(['middleware' => ['auth:web', 'admin'], 'prefix' => 'admin'], funct
     Route::resource('supplier', SupplierController::class);
 
     Route::resource('employer', EmployerController::class);
+    Route::get('/positions', [EmployerController::class, 'createPositionView'])->name('position.create');
+    Route::post('/positions', [EmployerController::class, 'createPosition'])->name('position.store');
+    Route::get('/positions/{position}', [EmployerController::class, 'updatePositionsView'])->name('position.update');
+    Route::put('/positions/{id}', [EmployerController::class, 'updatePositions'])->name('position.edit');
+    Route::delete('/position/{id}', [EmployerController::class, 'deletePositions'])->name('position.destroy');
 });
 
 Route::group(['middleware' => ['auth:web,employer']], function () {
@@ -59,6 +67,8 @@ Route::group(['middleware' => ['auth:web,employer']], function () {
     Route::post('/product/{product}/buy', [ProductController::class, 'checkoutStripe'])->name('product.checkout');
     Route::resource('cart', CartController::class);
 
+
 });
 
 Route::get('/employer/dashboard', [EmployerController::class, 'myProfile'])->name('employer.dashboard')->middleware('auth:employer');
+Route::get('/user/dashboard', [EmployerController::class, 'myProfile'])->name('user.dashboard')->middleware('auth:employer');

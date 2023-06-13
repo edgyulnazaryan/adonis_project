@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Employer;
 use App\Http\Controllers\Controller;
+use App\Models\Position;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Twilio\Rest\Client;
@@ -44,13 +45,19 @@ class EmployerController extends Controller
         $employer->update(['status' => !$employer->status]);
         return redirect()->back();
     }
+    public function changeStatusPosition(Position $position)
+    {
+        $position->update(['status' => !$position->status]);
+        return redirect()->back();
+    }
 
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        return view('employer.create');
+        $positions = Position::whereStatus(1)->get();
+        return view('employer.create', ['positions' => $positions]);
     }
 
     /**
@@ -129,5 +136,32 @@ class EmployerController extends Controller
     public function myProfile()
     {
         return view('employer.account');
+    }
+
+    public function createPositionView()
+    {
+        return view('positions.create');
+    }
+    public function updatePositionsView(Position $position)
+    {
+        return view('positions.edit', compact('position'));
+    }
+
+    public function createPosition(Request $request)
+    {
+        Position::create(['name' => $request->name, 'status' => $request->status]);
+        return redirect()->back();
+    }
+    public function updatePositions($id, Request $request)
+    {
+        $position = Position::findOrFail($id)->update([
+            'name' => $request->name,
+        ]);
+        return redirect()->back();
+    }
+    public function deletePositions($id)
+    {
+        $position = Position::findOrFail($id)->delete();
+        return redirect()->back();
     }
 }

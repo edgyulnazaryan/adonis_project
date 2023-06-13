@@ -27,6 +27,9 @@
             <li class="nav-item">
                 <a class="nav-link" data-toggle="tab" href="#employer">Employers</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#positions">Positions</a>
+            </li>
         </ul>
 
         <div class="tab-content">
@@ -275,10 +278,43 @@
                             <td>{{ $employer->status == 1 ? 'Active' : 'Deactive' }}</td>
                             <td>
                                 <div class="d-flex">
-                                    <a href="{{ route('employer.toggle.status', $employer) }}" class="btn btn-outline-dark col-md-3 mr-2"><i class="fa fa-refresh"></i> {{ $employer->status == 1 ? "Deactivate" : "Activate" }}</a>
-                                    <a href="{{ route('employer.edit', $employer) }}" class="btn btn-outline-warning mr-2"><i class="fa fa-edit"></i> Edit</a>
-                                    <a href="{{ route('employer.show', $employer) }}" class="btn btn-outline-info mr-2"><i class="fa fa-eye"></i></a>
+                                    <a href="{{ route('employer.toggle.status', $employer) }}" class="btn btn-outline-dark col-md-4 mr-2"><i class="fa fa-refresh"></i> {{ $employer->status == 1 ? "Deactivate" : "Activate" }}</a>
+                                    <a href="{{ route('employer.edit', $employer) }}" class="btn btn-outline-dark mr-2"><i class="fa fa-edit"></i> Edit</a>
+                                    <a href="{{ route('employer.show', $employer) }}" class="btn btn-outline-dark mr-2"><i class="fa fa-eye"></i></a>
                                     <form action="{{ route('employer.destroy', $employer) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-outline-danger"><i class="fa fa-trash"></i></button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="tab-pane fade" id="positions">
+                <h2>Position <a href="{{ route('position.create') }}" class="btn btn-success"><i class="fa fa-plus"></i></a></h2>
+
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Status</th>
+                        <th>#</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach($positions as $position)
+                        <tr class="text-center" style="color:#1a202c; cursor: pointer; background-color:{{ $position->is_online ? 'rgba(92,188,130,0.5)' : '' }}">
+                            <td>{{ $position->name }}</td>
+                            <td>{{ $position->status == 1 ? 'Active' : 'Deactive' }}</td>
+                            <td>
+                                <div class="d-flex">
+                                    <a href="{{ route('position.toggle.status', $position) }}" class="btn btn-outline-dark col-md-3 mr-2"><i class="fa fa-refresh"></i> {{ $position->status == 1 ? "Deactivate" : "Activate" }}</a>
+                                    <a href="{{ route('position.edit', $position) }}" class="btn btn-outline-dark mr-2"><i class="fa fa-edit"></i> Edit</a>
+                                    <form action="{{ route('position.destroy', $position) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-outline-danger"><i class="fa fa-trash"></i></button>

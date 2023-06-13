@@ -56,8 +56,16 @@ class LoginController extends Controller
             if (!is_null(Auth::user()) && Auth::user()->is_admin) {
                 $this->middleware('admin');
             } else {
-                Auth::guard('employer')->user()->is_online = 1;
-                Auth::guard('employer')->user()->save();
+                if (!is_null(Auth::guard('employer')->user()))
+                {
+                    Auth::guard('employer')->user()->is_online = 1;
+                    Auth::guard('employer')->user()->save();
+                }
+                if (!is_null(Auth::guard('web')->user()))
+                {
+                    Auth::guard('web')->user()->is_online = 1;
+                    Auth::guard('web')->user()->save();
+                }
                 return redirect()->intended('/')
                     ->withSuccess('Signed in');
             }
@@ -69,11 +77,19 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
-        Auth::guard('employer')->user()->is_online = 0;
-        Auth::guard('employer')->user()->save();
+        if (!is_null(Auth::guard('employer')->user()))
+        {
+            Auth::guard('employer')->user()->is_online = 0;
+            Auth::guard('employer')->user()->save();
+        }
+        if (!is_null(Auth::guard('web')->user()))
+        {
+            Auth::guard('web')->user()->is_online = 0;
+            Auth::guard('web')->user()->save();
+        }
         Session::flush();
 
-        Auth::logout();
+//        Auth::logout();
 
         return redirect('login');
     }

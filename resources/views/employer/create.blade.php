@@ -53,7 +53,9 @@
                             <div class="form-group">
                                 <label for="position_id">{{ __('Position') }}</label>
                                 <select id="position_id" name="position_id" class="form-select @error('position_id') is-invalid @enderror">
-                                    <option value="0">{{ __('Inactive') }}</option>
+                                    @foreach($positions as $position)
+                                        <option value={{ $position->id }}>{{ $position->name }}</option>
+                                    @endforeach
                                 </select>
                                 @error('position_id')
                                 <span class="invalid-feedback" role="alert">

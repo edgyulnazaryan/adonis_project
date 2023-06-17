@@ -77,7 +77,7 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
-        if (!is_null(Auth::guard('employer')->user()))
+        /*if (!is_null(Auth::guard('employer')->user()))
         {
             Auth::guard('employer')->user()->is_online = 0;
             Auth::guard('employer')->user()->save();
@@ -86,7 +86,7 @@ class LoginController extends Controller
         {
             Auth::guard('web')->user()->is_online = 0;
             Auth::guard('web')->user()->save();
-        }
+        }*/
         Session::flush();
 
 //        Auth::logout();

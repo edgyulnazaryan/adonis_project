@@ -100,36 +100,18 @@
         </main>
     </div>
     <input type="hidden" name="_token" value="{{ csrf_token() }}">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.js"></script>
+    <input type="hidden" name="userId" value="{{ !is_null(auth()->user()) ? auth()->user()->id : 0  }}">
+    <script src="https://cdn.socket.io/3.1.3/socket.io.min.js" integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh" crossorigin="anonymous"></script>
 
-    <script>
-        let token = $('input[name="_token"]').val();
-
-        const socketUrl = 'http://localhost:8000'; // Replace with your Socket.IO server URL
-
-        const socket = io(socketUrl, {
-            autoConnect: true,
-            transports: ['websocket', 'polling'],
-            forceNew: true,
-            reconnectionDelay: 50,
-            path: '/websocket',
-            auth: (cb) => {
-                cb({
-                    token: `${token}`,
-                });
-            },
-        });
-
-        socket.connect();
-
-        socket.on('connect', () => {
-            socket.emit('online');
-            // alert(1)
-        });
-    </script>
 
     <script>
         $(document).ready(function (){
+
+            const socket = io.connect('http://192.168.224.162:3030');
+            let userId = $('input[name="userId"]').val();
+            socket.emit('online', {
+                'userId' : userId
+            })
 
             let token = $('input[name="_token"]').val();
 
@@ -143,19 +125,6 @@
                     },
                     success: function(count) {
                         $(".notification_span").append(count)
-
-
-                        // var socket = $.simpleWebSocket({
-                        //     url: 'ws://127.0.0.1:3000/',
-                        //     protocols: 'your_protocol', // optional
-                        //     timeout: 20000, // optional, default timeout between connection attempts
-                        //     attempts: 60, // optional, default attempts until closing connection
-                        //     dataType: 'json' // optional (xml, json, text), default json
-                        // });
-                        //
-                        // socket.connect();
-                        //
-                        // socket.isConnected(); // or: socket.isConnected(function(connected) {});
                     },
                     error: function(error) {
                         console.log(error);

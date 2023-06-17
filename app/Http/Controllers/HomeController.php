@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employer;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -24,7 +25,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $activeEmployers = Employer::all();
+        $activeEmployers = User::all();
         return view('home', compact('activeEmployers'));
     }
 }

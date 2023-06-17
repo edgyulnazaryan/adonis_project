@@ -39,11 +39,12 @@
                         @foreach($activeEmployers as $activeEmployer)
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <a href="{{ route('employer.show', $activeEmployer) }}" class="text-monospace text-decoration-none text-reset">{{ $activeEmployer->name . ' ' . $activeEmployer->surname }}</a>
-                                @if($activeEmployer->is_online)
+                                {{--@if($activeEmployer->is_online)
                                 <span class="badge bg-success rounded-pill">Online</span>
                                 @else
                                 <span class="badge bg-danger rounded-pill">Offline</span>
-                                @endif
+                                @endif--}}
+                                <span class="badge bg-danger rounded-pill userStatus user-icon-{{ $activeEmployer->id }}" data-id="{{$activeEmployer->id}}"></span>
                             </li>
                         @endforeach
                     </ul>
@@ -54,6 +55,32 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+
+        const socket = io.connect('http://192.168.224.162:3030');
+        let userId = $('input[name="userId"]').val();
+        socket.emit('online', {
+            'userId': userId
+        })
+
+        socket.on('updateUserStatus', function (data) {
+            let userStatusIcon = $(".userStatus")
+            userStatusIcon.addClass('bg-danger')
+            userStatusIcon.removeClass('bg-success')
+            userStatusIcon.html('Offline')
+            $.each(data, function (key, value) {
+                if(value != null && value != 0) {
+                    let userIcon = $(".user-icon-" + key)
+                    userIcon.addClass('bg-success')
+                    userIcon.removeClass('bg-danger')
+                    userIcon.html('Online')
+                }
+            })
+        })
+    })
+</script>
 @endsection
 
 <style>

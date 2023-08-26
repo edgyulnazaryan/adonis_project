@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Position;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Twilio\Rest\Client;
 
 
@@ -77,6 +78,7 @@ class EmployerController extends Controller
         }
         $password = $inputs['password'];
         $inputs['password'] = Hash::make($inputs['password']);
+        $inputs['uuid'] = Str::uuid();
         $data = Employer::create($inputs);
 //        $this->sendSMS($data->phone, $password);
         return redirect()->back();

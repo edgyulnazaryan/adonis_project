@@ -25,7 +25,8 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $activeEmployers = User::all();
-        return view('home', compact('activeEmployers'));
+        $activeUsers = User::all();
+        $activeEmployers = Employer::all();
+        return view('home', compact('activeEmployers', 'activeUsers'));
     }
 }

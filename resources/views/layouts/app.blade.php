@@ -41,7 +41,12 @@
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item"><a href="{{ route('product.index') }}" class="btn btn-outline-dark">Products</a></li>
-                        <li class="nav-item ml-2"><a href="{{ route('cart.index') }}" class="btn btn-outline-dark">Cart</a></li>
+                        <li class="nav-item ml-2">
+                            <a href="{{ route('cart.index') }}" class="btn btn-outline-dark">
+                                Cart
+                                <span class="badge badge-success cartProductCount"></span>
+                            </a>
+                        </li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->
@@ -101,35 +106,43 @@
     </div>
     <input type="hidden" name="_token" value="{{ csrf_token() }}">
     <input type="hidden" name="userId" value="{{ !is_null(auth()->user()) ? auth()->user()->id : 0  }}">
+    <input type="hidden" name="isAdmin" value="{{ !is_null(auth()->user()) ? auth()->user()->is_admin : 0  }}">
+    <input type="hidden" name="employerUuid" value="{{ !is_null(auth('employer')->user()) ? auth('employer')->user()->id : 0  }}">
     <script src="https://cdn.socket.io/3.1.3/socket.io.min.js" integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh" crossorigin="anonymous"></script>
-
 
     <script>
         $(document).ready(function (){
 
-            const socket = io.connect('http://192.168.224.162:3030');
-            let userId = $('input[name="userId"]').val();
-            socket.emit('online', {
-                'userId' : userId
+            const socketUser = io.connect('http://192.168.224.162:3030');
+            const socketEmployer = io.connect('http://192.168.224.162:3031');
+
+            socketUser.emit('online', {
+                'userId' : $('input[name="userId"]').val(),
             })
 
-            let token = $('input[name="_token"]').val();
+            socketEmployer.emit('onlineEmployer', {
+                'employerId' : $('input[name="employerId"]').val()
+            })
 
-            $.ajax(
-                {
-                    url: "{{ route('admin.notifications') }}",
-                    method: 'POST',
-                    dataType: 'json',
-                    headers: {
-                        'X-CSRF-Token': token
-                    },
-                    success: function(count) {
-                        $(".notification_span").append(count)
-                    },
-                    error: function(error) {
-                        console.log(error);
-                    }
-                })
+            let isAdmin = $('input[name="isAdmin"]').val();
+            if(isAdmin) {
+                let token = $('input[name="_token"]').val();
+                $.ajax(
+                    {
+                        url: "{{ route('admin.notifications') }}",
+                        method: 'POST',
+                        dataType: 'json',
+                        headers: {
+                            'X-CSRF-Token': token
+                        },
+                        success: function (count) {
+                            $(".notification_span").append(count)
+                        },
+                        error: function (error) {
+                            console.log(error);
+                        }
+                    })
+            }
         })
     </script>
 </body>

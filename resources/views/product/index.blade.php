@@ -3,6 +3,24 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
+            <form action="{{ route('product.filter') }}" method="GET">
+                <h3>Size</h3>
+                <div class="form-group mt-3 d-flex align-items-center">
+                    <label class="form-check-label mr-3" for="minPriceValue">Min</label>
+                    <input class="form-control col-md-4" type="number" name="priceMin" id="minPriceValue" placeholder="Min price">
+                </div>
+
+                <div class="form-group mt-3 d-flex align-items-center">
+                    <label class="form-check-label mr-3" for="maxPriceValue">Max</label>
+                    <input class="form-control col-md-4" type="number" name="priceMax" id="maxPriceValue" placeholder="Max price">
+                </div>
+
+                <button type="button" class="btn btn-outline-dark btn-block mt-3" id="filterProductsBtn">Filter</button>
+            </form>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-md-12">
             <input type="text" name="search" id="search_input" class="form-control" placeholder="Search...">
         </div>
     </div>
@@ -144,12 +162,30 @@
 
 <script>
     $(document).ready(function(){
+        /*const socketApp = io.connect('http://192.168.224.162:3030');
+        socketApp.on('cart', function (){
+            console.log(1)
+        })*/
+
         let inputAppended = false;
         let search = null
+        let filter = null
         let image_src = null
         let token = $('input[name="_token"]').val();
-        searchProducts(search)
-        $(".span_order").click(function (e){
+
+        $("#search_input").on("input", function (e){
+            search = e.target.value
+            searchProducts(search, filter)
+        })
+
+        $("#filterProductsBtn").click(function (data){
+            let minPriceValue = $("#minPriceValue").val();
+            let maxPriceValue = $("#maxPriceValue").val();
+            filter = {'priceMin' : minPriceValue, 'priceMax' : maxPriceValue};
+            searchProducts(search, filter)
+        })
+        searchProducts(search, filter)
+        /*$(".span_order").click(function (e){
             let product_id = $(this).data('id');
             if(!inputAppended) {
                 $(this).parent().children('input[name=order_quantity]').attr('type', 'number')
@@ -161,10 +197,9 @@
                 inputAppended = false
             }
             console.log(inputAppended)
-        })
+        })*/
 
-
-        function searchProducts(search) {
+        function searchProducts(search, filter) {
             $('#loader').show();
             $(".search-result").html('')
             $.ajax({
@@ -174,7 +209,7 @@
                 headers: {
                     'X-CSRF-Token': token
                 },
-                data : {'search' : search},
+                data : {'search' : search, 'filter' : filter},
                 success: function(response) {
                     $('#loader').show();
                     if (response.data.length == 0) {
@@ -197,6 +232,7 @@
                         } else {
                             image_src = '/images/'+response.data[i].image
                         }
+                        let addCartStatus = response.data[i].cart_product_count ? 'Remove from Cart' : 'Add to Cart';
                         $(".search-result").append(
                             `
                             <div class="col-md-4 mt-3">
@@ -213,7 +249,11 @@
                                         <p class="product-quantity">Qnt. : ${response.data[i].quantity}</p>
                                     </div>
                                     <div class="card-footer">
-                                        <a href="/product/${response.data[i].id}" class="btn btn-success">Show</a>
+<!--                                        <a href='/product/${response.data[i].id}/cart' class="btn btn-outline-dark">-->
+<!--                                            <i class="fa fa-shopping-cart" aria-hidden="true"> ${addCartStatus}</i>-->
+<!--                                        </a>-->
+<!--                                        <a href="/product/${response.data[i].id}" class="btn btn-success">Show</a>-->
+                                        <button class="addCart1" data-id="${response.data[i].id}">${addCartStatus}</button>
                                     </div>
                                 </div>
                             </div>
@@ -230,9 +270,9 @@
             })
         }
 
-        $("#search_input").on("input", function (e){
-            search = e.target.value
-            searchProducts(search)
+
+        $(".card").on('click', function (e) {
+            alert(22)
         })
     })
 

@@ -55,6 +55,8 @@ class LoginController extends Controller
         if (Auth::guard('web')->attempt($credentials) || Auth::guard('employer')->attempt($request->only(['email','password']), $request->get('remember'))){
             if (!is_null(Auth::user()) && Auth::user()->is_admin) {
                 $this->middleware('admin');
+                return redirect()->intended('/admin')
+                    ->withSuccess('Signed in');
             } else {
                 if (!is_null(Auth::guard('employer')->user()))
                 {

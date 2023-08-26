@@ -50,7 +50,7 @@ Route::group(['middleware' => ['auth:web', 'admin'], 'prefix' => 'admin'], funct
     Route::put('/positions/{id}', [EmployerController::class, 'updatePositions'])->name('position.edit');
     Route::delete('/position/{id}', [EmployerController::class, 'deletePositions'])->name('position.destroy');
 });
-
+Route::get('/product/filter', [ProductController::class, 'filterProduct'])->name('product.filter');
 Route::group(['middleware' => ['auth:web,employer']], function () {
 
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
@@ -72,3 +72,4 @@ Route::group(['middleware' => ['auth:web,employer']], function () {
 
 Route::get('/employer/dashboard', [EmployerController::class, 'myProfile'])->name('employer.dashboard')->middleware('auth:employer');
 Route::get('/user/dashboard', [EmployerController::class, 'myProfile'])->name('user.dashboard')->middleware('auth:employer');
+

@@ -1,0 +1,38 @@
+.sidebar {
+    width:360px;
+}
+.sidebar-inner {
+    display:-webkit-box;
+    display:flex;
+    -webkit-box-orient:vertical;
+    flex-direction:column;
+    height:100%;
+}
+.sidebar-inner .flex-scroll {
+    overflow-y:scroll;
+    min-height:0;
+    -webkit-box-flex:1;
+    flex:1;
+}
+
+/* Mobile rules */
+@media only screen and (max-width:640px) {
+    .sidebar {
+        position:absolute;
+        width:100%;
+        padding:0;
+        margin:0;
+        border-radius:0;
+        top:auto;
+        bottom:0;
+        height:40%;
+        z-index:10;
+    }
+    .sidebar-inner {
+        height:100%;
+        border-radius:0;
+        box-shadow:none;
+    }
+    .sidebar .round-top,
+    .sidebar .round-bottom { border-radius:0; }
+}

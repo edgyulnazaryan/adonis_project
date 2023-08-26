@@ -41,6 +41,7 @@
                         </p>
                     </div>
                     <div class="card-footer">
+                        <a href="{{ route('supplier.edit', $supplier) }}" class="btn btn-warning mr-2 text-white"><i class="fa fa-edit"></i> Edit</a>
                         <a href="{{ route('supplier.destroy', $supplier) }}" class="btn btn-danger">Delete supplier</a>
                     </div>
                 </div>

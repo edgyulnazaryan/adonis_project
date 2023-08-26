@@ -19,6 +19,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
+    <input type="hidden" id="authUserId" value="{{ !is_null(\Illuminate\Support\Facades\Auth::user()) ? \Illuminate\Support\Facades\Auth::user()->id : 0 }}">
+
 
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
@@ -38,11 +41,12 @@
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item"><a href="{{ route('product.index') }}" class="btn btn-outline-dark">Products</a></li>
-                        <li class="nav-item ml-2"><a href="{{ route('cart.index') }}" class="btn btn-outline-dark">Cart</a></li>
-                        @if(Auth::user() && \Illuminate\Support\Facades\Auth::user()->is_admin)
-                            <li class="nav-item ml-2"><a href="{{ route('resources.index') }}" class="btn btn-outline-dark">Resources</a></li>
-                            <li class="nav-item ml-2"><a href="{{ route('supplier.index') }}" class="btn btn-outline-dark">Suppliers</a></li>
-                        @endif
+                        <li class="nav-item ml-2">
+                            <a href="{{ route('cart.index') }}" class="btn btn-outline-dark">
+                                Cart
+                                <span class="badge badge-success cartProductCount"></span>
+                            </a>
+                        </li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->
@@ -70,14 +74,21 @@
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="{{ route('logout') }}"
-                                       onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                                        {{ __('Logout') }}
-                                    </a>
+
                                     @if(Auth::user() && \Illuminate\Support\Facades\Auth::user()->is_admin)
                                         <a class="dropdown-item" href="{{ route('admin.dashboard') }}">Dashboard</a>
                                     @endif
+                                    @if(Auth::user() && !\Illuminate\Support\Facades\Auth::user()->is_admin && Auth::guard()->name != 'employer')
+                                        <a class="dropdown-item" href="{{ route('user.dashboard') }}">My profile</a>
+                                    @endif
+                                    @if(Auth::guard()->name == 'employer')
+                                        <a class="dropdown-item" href="{{ route('employer.dashboard') }}">My Profile</a>
+                                    @endif
+                                    <a class="dropdown-item" href="{{ route('logout') }}"
+                                       onclick="event.preventDefault();
+                                                 document.getElementById('logout-form').submit();">
+                                        {{ __('Logout') }}
+                                    </a>
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                         @csrf
                                     </form>
@@ -88,30 +99,50 @@
                 </div>
             </div>
         </nav>
-
+{{--        @include('layouts.sidebar')--}}
         <main class="py-4">
             @yield('content')
         </main>
     </div>
     <input type="hidden" name="_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="userId" value="{{ !is_null(auth()->user()) ? auth()->user()->id : 0  }}">
+    <input type="hidden" name="isAdmin" value="{{ !is_null(auth()->user()) ? auth()->user()->is_admin : 0  }}">
+    <input type="hidden" name="employerUuid" value="{{ !is_null(auth('employer')->user()) ? auth('employer')->user()->id : 0  }}">
+    <script src="https://cdn.socket.io/3.1.3/socket.io.min.js" integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh" crossorigin="anonymous"></script>
+
     <script>
         $(document).ready(function (){
-            let token = $('input[name="_token"]').val();
-            $.ajax(
-                {
-                    url: "{{ route('admin.notifications') }}",
-                    method: 'POST',
-                    dataType: 'json',
-                    headers: {
-                        'X-CSRF-Token': token
-                    },
-                    success: function(count) {
-                        $(".notification_span").append(count)
-                    },
-                    error: function(error) {
-                        console.log(error);
-                    }
-                })
+
+            const socketUser = io.connect('http://192.168.224.162:3030');
+            const socketEmployer = io.connect('http://192.168.224.162:3031');
+
+            socketUser.emit('online', {
+                'userId' : $('input[name="userId"]').val(),
+            })
+
+            socketEmployer.emit('onlineEmployer', {
+                'employerId' : $('input[name="employerId"]').val()
+            })
+
+            let isAdmin = $('input[name="isAdmin"]').val();
+            if(isAdmin) {
+                let token = $('input[name="_token"]').val();
+                $.ajax(
+                    {
+                        url: "{{ route('admin.notifications') }}",
+                        method: 'POST',
+                        dataType: 'json',
+                        headers: {
+                            'X-CSRF-Token': token
+                        },
+                        success: function (count) {
+                            $(".notification_span").append(count)
+                        },
+                        error: function (error) {
+                            console.log(error);
+                        }
+                    })
+            }
         })
     </script>
 </body>

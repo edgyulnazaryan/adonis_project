@@ -104,14 +104,20 @@ class ProductController extends Controller
         $user = Auth::user();
         if (!$productCart->first())
         {
-            Cart::create(
+            $cart = Cart::create(
                 [
                     'product_id' => $product->id,
                     'user_id' => $user->id,
                     'quantity' => $request->quantity ?? 1,
                     'price' => $product->price ,
                 ]);
+            Redis::set("cart:$cart->id:product:$product->id", json_encode($cart));
+            Redis::publish("cart", json_encode($cart));
+//            dd(Redis::get("cart:$cart->id:product:$product->id"));
+
         } else {
+            $cartId = $productCart->first()->id;
+            Redis::del("cart:$cartId");
             $productCart->delete();
         }
         return redirect()->back();
@@ -296,9 +302,12 @@ class ProductController extends Controller
 
     public function getProductsJson(Request $request)
     {
-        $products = Product::whereStatus(1)->orderByDesc('created_at');
+        $products = Product::withCount('cartProduct')->whereStatus(1)->orderByDesc('created_at');
         if (!is_null($request->search)) {
             return $this->search($products, $request->search);
+        }
+        if (!is_null($request->filter) && (!is_null($request->filter['priceMin']) || !is_null($request->filter['priceMax']))) {
+            $products = $this->filterProduct($products, $request->filter);
         }
         $products = $products->paginate(20);
 
@@ -308,6 +317,17 @@ class ProductController extends Controller
     public function search($query, $search)
     {
         return response()->json($query->where('name', 'LIKE', "%$search%")->paginate(20));
+    }
+
+    public function filterProduct($products, $filter)
+    {
+        if (!is_null($filter['priceMin'])) {
+            $products->where('price', '>=', (int)$filter['priceMin']);
+        }
+        if (!is_null($filter['priceMax'])) {
+            $products->where('price', '<=', (int)$filter['priceMax']);
+        }
+        return $products;
     }
 
 }

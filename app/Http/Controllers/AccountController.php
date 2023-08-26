@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Employer;
 use App\Models\Order;
+use App\Models\Position;
 use App\Models\Product;
 use App\Models\RequestProduct;
 use App\Models\Resource;
@@ -16,19 +18,20 @@ class AccountController extends Controller
 {
     public function dashboard()
     {
-        $user = Auth::user();
-        $transactions = $this->getTransactions($user);
+        $transactions = $this->getTransactions();
         $users = $this->getUsers();
         $products = $this->getProducts();
         $suppliers = $this->getSuppliers();
+        $employers = $this->getEmployers();
         $requestedProducts = $this->getRequestProducts();
         $resources = $this->getResources();
-        return view('dashboard', compact('suppliers', 'resources', 'transactions', 'users', 'products', 'requestedProducts'));
+        $positions = $this->getPositions();
+        return view('dashboard', compact('employers', 'positions', 'suppliers', 'resources', 'transactions', 'users', 'products', 'requestedProducts'));
     }
 
-    public function getTransactions($user)
+    public function getTransactions()
     {
-        return Order::with('product')->where('user_id', $user->id)->orderByDesc('created_at')->get();
+        return Order::with('product')->orderByDesc('created_at')->get();
     }
 
     public function getUsers()
@@ -63,5 +66,14 @@ class AccountController extends Controller
     public function getSuppliers()
     {
         return Supplier::all();
+    }
+    public function getEmployers()
+    {
+        return Employer::all();
+    }
+
+    public function getPositions()
+    {
+        return Position::all();
     }
 }

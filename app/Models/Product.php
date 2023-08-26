@@ -18,4 +18,9 @@ class Product extends Model
     protected $casts = [
         'status' => 'boolean'
     ];
+
+    public function cartProduct()
+    {
+        return $this->hasOne(Cart::class, 'product_id', 'id')->where('user_id', auth()->user()->id);
+    }
 }

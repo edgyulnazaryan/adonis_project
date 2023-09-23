@@ -100,8 +100,8 @@ class ProductController extends Controller
 
     public function toggleButtonToCart(Product $product, Request $request)
     {
-        $productCart = Cart::where('product_id', $product->id);
         $user = Auth::user();
+        $productCart = Cart::where('product_id', $product->id)->where('user_id', $user->id);
         if (!$productCart->first())
         {
             $cart = Cart::create(
@@ -111,15 +111,16 @@ class ProductController extends Controller
                     'quantity' => $request->quantity ?? 1,
                     'price' => $product->price ,
                 ]);
+
             Redis::set("cart:$cart->id:product:$product->id", json_encode($cart));
             Redis::publish("cart", json_encode($cart));
-//            dd(Redis::get("cart:$cart->id:product:$product->id"));
-
         } else {
             $cartId = $productCart->first()->id;
             Redis::del("cart:$cartId");
             $productCart->delete();
         }
+        $userCart = Cart::where('user_id', $user->id)->count();
+        Session::put('user_cart_'.$user->id, $userCart);
         return redirect()->back();
     }
 
@@ -326,6 +327,13 @@ class ProductController extends Controller
         }
         if (!is_null($filter['priceMax'])) {
             $products->where('price', '<=', (int)$filter['priceMax']);
+        }
+
+        if (!is_null($filter['qntMin'])) {
+            $products->where('quantity', '>=', (int)$filter['qntMin']);
+        }
+        if (!is_null($filter['qntMax'])) {
+            $products->where('quantity', '<=', (int)$filter['qntMax']);
         }
         return $products;
     }

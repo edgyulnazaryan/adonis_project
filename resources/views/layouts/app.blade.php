@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+{{--<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">--}}
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -44,7 +44,7 @@
                         <li class="nav-item ml-2">
                             <a href="{{ route('cart.index') }}" class="btn btn-outline-dark">
                                 Cart
-                                <span class="badge badge-success cartProductCount"></span>
+                                <span class="badge badge-success cartProductCount">{{ !is_null(auth()->user()) ? (Session::get('user_cart_'.auth()->user()->id) ?? 0) : 0 }}</span>
                             </a>
                         </li>
                     </ul>

@@ -5,15 +5,29 @@
         <div class="col-md-12">
             <form action="{{ route('product.filter') }}" method="GET">
                 <h3>Size</h3>
-                <div class="form-group mt-3 d-flex align-items-center">
-                    <label class="form-check-label mr-3" for="minPriceValue">Min</label>
-                    <input class="form-control col-md-4" type="number" name="priceMin" id="minPriceValue" placeholder="Min price">
+                <div class="d-flex">
+                    <div class="col-md-6">
+                        <div class="form-group mt-3 d-flex align-items-center">
+                            <input class="form-control col-md-4" type="number" name="priceMin" id="minPriceValue" placeholder="Min price">
+                        </div>
+
+                        <div class="form-group mt-3 d-flex align-items-center">
+                            <input class="form-control col-md-4" type="number" name="priceMax" id="maxPriceValue" placeholder="Max price">
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group mt-3 d-flex align-items-center">
+                            <input class="form-control col-md-4" type="number" name="qntMin" id="minQntValue" placeholder="Min quantity">
+                        </div>
+
+                        <div class="form-group mt-3 d-flex align-items-center">
+                            <input class="form-control col-md-4" type="number" name="qntMax" id="maxQntValue" placeholder="Max quantity">
+                        </div>
+                    </div>
                 </div>
 
-                <div class="form-group mt-3 d-flex align-items-center">
-                    <label class="form-check-label mr-3" for="maxPriceValue">Max</label>
-                    <input class="form-control col-md-4" type="number" name="priceMax" id="maxPriceValue" placeholder="Max price">
-                </div>
+
 
                 <button type="button" class="btn btn-outline-dark btn-block mt-3" id="filterProductsBtn">Filter</button>
             </form>
@@ -181,7 +195,9 @@
         $("#filterProductsBtn").click(function (data){
             let minPriceValue = $("#minPriceValue").val();
             let maxPriceValue = $("#maxPriceValue").val();
-            filter = {'priceMin' : minPriceValue, 'priceMax' : maxPriceValue};
+            let minQnteValue = $("#minQnteValue").val();
+            let maxQnteValue = $("#maxQnteValue").val();
+            filter = {'priceMin' : minPriceValue, 'priceMax' : maxPriceValue, 'qntMin' : minQntValue, 'qntMax' : maxQntValue};
             searchProducts(search, filter)
         })
         searchProducts(search, filter)
@@ -249,11 +265,11 @@
                                         <p class="product-quantity">Qnt. : ${response.data[i].quantity}</p>
                                     </div>
                                     <div class="card-footer">
-<!--                                        <a href='/product/${response.data[i].id}/cart' class="btn btn-outline-dark">-->
-<!--                                            <i class="fa fa-shopping-cart" aria-hidden="true"> ${addCartStatus}</i>-->
-<!--                                        </a>-->
-<!--                                        <a href="/product/${response.data[i].id}" class="btn btn-success">Show</a>-->
-                                        <button class="addCart1" data-id="${response.data[i].id}">${addCartStatus}</button>
+                                        <a href='/product/${response.data[i].id}/cart' class="btn btn-outline-dark">
+                                            <i class="fa fa-shopping-cart" aria-hidden="true"> ${addCartStatus}</i>
+                                        </a>
+                                        <a href="/product/${response.data[i].id}" class="btn btn-success">Show</a>
+<!--                                        <button class="addCart1" data-id="${response.data[i].id}">${addCartStatus}</button>-->
                                     </div>
                                 </div>
                             </div>
